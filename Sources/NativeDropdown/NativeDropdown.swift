@@ -78,9 +78,8 @@ public struct NativeDropdown<Anchor: View>: View {
                     onComplete: complete,
                     onCancel: { isPresented = false }
                 )
-                // Native anchored popover in portrait; allow the system's full-screen
-                // adaptation in compact-height environments (e.g. landscape phones).
-                .presentationCompactAdaptation(horizontal: .popover, vertical: .fullScreenCover)
+                // Preserve the anchored dropdown in both compact width and height.
+                .presentationCompactAdaptation(.popover)
                 .interactiveDismissDisabled(mode == .multiple && !isCurrentValid)
             }
             .onChange(of: isPresented) { _, presented in

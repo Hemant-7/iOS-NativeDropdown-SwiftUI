@@ -4,6 +4,11 @@ final class PopOverDropDownUITests: XCTestCase {
     override func setUpWithError() throws { continueAfterFailure = false }
 
     @MainActor
+    override func tearDownWithError() throws {
+        XCUIDevice.shared.orientation = .portrait
+    }
+
+    @MainActor
     func testSingleSearchAndDisabledRows() throws {
         let app = XCUIApplication()
         app.launch()
@@ -93,6 +98,53 @@ final class PopOverDropDownUITests: XCTestCase {
         search.typeText("Item 3000")
         last.tap()
         XCTAssertTrue(app.buttons["Item 3000"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testLandscapeSearchAndRequiredMultipleSelection() throws {
+        let app = XCUIApplication()
+        app.launch()
+        XCUIDevice.shared.orientation = .landscapeLeft
+        expectation(for: NSPredicate { _, _ in app.frame.width > app.frame.height }, evaluatedWith: app)
+        waitForExpectations(timeout: 5)
+        let anchor = app.buttons["example.multiple"]
+        // Short scrolls avoid skipping a row in the compact-height List.
+        for _ in 0..<20 {
+            if anchor.isHittable { break }
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.75))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.45)))
+        }
+        XCTAssertTrue(anchor.isHittable)
+        anchor.tap()
+        let apply = app.buttons["dropdown.complete"]
+        let search = app.textFields["dropdown.search"]
+        XCTAssertTrue(apply.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.sheets.firstMatch.exists)
+        XCTAssertTrue(apply.isHittable)
+        XCTAssertFalse(apply.isEnabled)
+        XCTAssertTrue(search.isHittable)
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Landscape anchored popover"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        search.tap()
+        search.typeText("Mumbai")
+        let item = app.buttons["dropdown.item.mumbai"]
+        XCTAssertTrue(item.waitForExistence(timeout: 5))
+        XCTAssertTrue(item.isHittable)
+        item.tap()
+        XCTAssertTrue(apply.isHittable)
+        XCTAssertTrue(apply.isEnabled)
+        apply.tap()
+        XCTAssertTrue(anchor.label.contains("1 selected"))
+
+        app.buttons["Choose city"].tap()
+        XCTAssertTrue(app.buttons["dropdown.item.bengaluru"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.sheets.firstMatch.exists)
+        XCTAssertFalse(app.buttons["dropdown.complete"].exists)
+        XCUIDevice.shared.orientation = .portrait
+        XCTAssertTrue(app.buttons["dropdown.item.bengaluru"].waitForExistence(timeout: 5))
+        app.buttons["dropdown.item.bengaluru"].tap()
     }
 
 }

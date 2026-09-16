@@ -72,7 +72,7 @@ Place either form inside `List` or `ToolbarItem`. The native popover attaches to
 
 ## Selection and validation contract
 
-- Single selection replaces the previous value. Optional single selection provides Clear selection when `showsSingleSelectionActions` is true. Single-selection footers are hidden by default. Done remains available when automatic dismissal is off or the presentation adapts to full screen in compact height, so the user can always exit. Required single selection can be dismissed without choosing; the parent validates before submitting.
+- Single selection replaces the previous value. Optional single selection provides Clear selection when `showsSingleSelectionActions` is true. Single-selection footers are hidden by default. Done remains available when automatic dismissal is off, so the user can always exit. Required single selection can be dismissed without choosing; the parent validates before submitting.
 - Required multiple selection prevents deselecting the final value. An initially empty selection remains empty until the user chooses an item. Apply/Done is disabled and native interactive dismissal is blocked while empty.
 - **Cancel explicitly abandons a draft transaction**, even when the parent started empty. It does not complete or commit an invalid selection. This also provides an escape when the source is empty or all items are disabled. The parent must still validate required fields before screen submission.
 - Apply commits once. Outside dismissal of a valid draft discards uncommitted edits, like Cancel. Immediate mode updates the binding on every change and has no rollback.
@@ -84,7 +84,7 @@ Place either form inside `List` or `ToolbarItem`. The native popover attaches to
 
 ## Native presentation and compatibility
 
-The package supports **iOS 17+** and requires **Xcode 16+ / Swift 6 tools**. The demo app retains its existing iOS 27 target and needs Xcode 27. Portrait compact layouts request a native popover; compact-height layouts may adapt to a full-screen presentation. iPad uses an anchored popover. Native system colors, multiline text, and scalable controls support Dark Mode and Dynamic Type.
+The package supports **iOS 17+** and requires **Xcode 16+ / Swift 6 tools**. The demo app retains its existing iOS 27 target and needs Xcode 27. Both portrait and landscape request a native anchored popover. The scrolling viewport can shrink to the available height, including when the keyboard is shown. iPad uses an anchored popover. Native system colors, multiline text, and scalable controls support Dark Mode and Dynamic Type.
 
 The single-value `onGeometryChange` API used for short-list sizing is back-deployed; the build requires a recent SDK. Package source has no UIKit imports, third-party dependencies, force unwraps, manual screen-coordinate positioning, or global mutable state.
 

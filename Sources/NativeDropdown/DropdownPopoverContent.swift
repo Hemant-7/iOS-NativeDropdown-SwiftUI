@@ -13,7 +13,6 @@ struct DropdownPopoverContent: View {
     let onCancel: () -> Void
 
     @State private var searchText = ""
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var rowsHeight: CGFloat?
     private let horizontalInset: CGFloat = 16
 
@@ -24,13 +23,14 @@ struct DropdownPopoverContent: View {
     private var usesDraft: Bool { mode == .multiple && configuration.showsApplyButton }
     private var showsActions: Bool {
         mode == .multiple || configuration.showsSingleSelectionActions
-            || !configuration.dismissOnSingleSelection || verticalSizeClass == .compact
+            || !configuration.dismissOnSingleSelection
     }
 
     var body: some View {
         // Compute once per update, never once per row or divider.
         let results = results
         let selectedIDs = Set(selected.map(\.id))
+        let preferredRowsHeight = results.count > 8 ? 420 : min(rowsHeight ?? 420, 420)
         return VStack(spacing: 0) {
             if configuration.isSearchEnabled {
                 HStack {
@@ -50,6 +50,7 @@ struct DropdownPopoverContent: View {
                 .background(.quaternary, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .padding(.horizontal, horizontalInset)
                 .padding(.bottom, 8)
+                .layoutPriority(1)
             }
 
             if results.isEmpty {
@@ -76,8 +77,9 @@ struct DropdownPopoverContent: View {
                             }
                         }
                     }
-                    .frame(height: results.count > 8 ? 420 : rowsHeight.map { min($0, 420) })
-                    .frame(maxHeight: 420)
+                    // Keep the portrait content height, but allow the viewport to
+                    // shrink when landscape or the keyboard leaves less room.
+                    .frame(minHeight: 0, idealHeight: preferredRowsHeight, maxHeight: preferredRowsHeight)
                     .scrollBounceBehavior(.basedOnSize)
                     .onChange(of: searchText) { _, _ in
                         if let first = results.first { proxy.scrollTo(first.id, anchor: .top) }
@@ -92,6 +94,7 @@ struct DropdownPopoverContent: View {
                     VStack { actions }
                 }
                 .padding()
+                .layoutPriority(1)
             }
         }
         .padding(.top, 12)

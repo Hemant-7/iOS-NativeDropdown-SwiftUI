@@ -19,7 +19,7 @@ A reusable, 100% SwiftUI dropdown for iPhone and iPad. Anchor a native popover t
 
 1. Choose **File → Add Package Dependencies…**.
 2. Enter `https://github.com/Hemant-7/iOS-NativeDropdown-SwiftUI.git`.
-3. Select **Up to Next Major Version**, starting at **1.0.0**.
+3. Select **Up to Next Major Version**, starting at **1.0.1**.
 4. Add the **NativeDropdown** product to your app target.
 5. Add `import NativeDropdown` where you use the dropdown.
 
@@ -28,7 +28,7 @@ A reusable, 100% SwiftUI dropdown for iPhone and iPad. Anchor a native popover t
 ```swift
 .package(
     url: "https://github.com/Hemant-7/iOS-NativeDropdown-SwiftUI.git",
-    from: "1.0.0"
+    from: "1.0.1"
 )
 ```
 
@@ -119,7 +119,7 @@ The same component can be placed inside `List` or `ToolbarItem`.
 - Required multiple selection disables empty Apply/Done, prevents deselecting the final item, and blocks interactive dismissal while empty. **Cancel abandons the draft**, even if the original parent value is empty. Validate required fields before submitting the parent screen.
 - `onValidationChange` reports committed nonempty-selection validity. Business rules remain in the parent.
 - External parent selection changes replace pending draft edits.
-- Single-selection footer actions are opt-in through `showsSingleSelectionActions`; Done is retained when needed to exit a non-auto-dismissing or compact-height full-screen presentation.
+- Single-selection footer actions are opt-in through `showsSingleSelectionActions`; Done is retained when needed to exit a non-auto-dismissing presentation.
 - Large arrays use lazy row rendering, not network pagination. Supply your fetched items to `items` and update them as data arrives.
 
 See the [full API and behavior guide](Documentation/Usage.md) for configuration defaults, callbacks, and more examples.
